@@ -120,6 +120,22 @@ class PlayerSetupPage extends JFrame {
         setContentPane(background);
         setVisible(true);
     }
+private JPanel buildPlayerPanel(String text, Color caret) {
+        JPanel panel = new JPanel(new FlowLayout());
+        panel.setOpaque(false);
+        JLabel label = new JLabel(text);
+        label.setForeground(Color.WHITE);
+        label.setFont(new Font("Arial", Font.BOLD, 18));
+        JTextField field = new JTextField(12);
+        field.setFont(new Font("Arial", Font.BOLD, 18));
+        field.setForeground(caret);
+        field.setBackground(new Color(30, 30, 30));
+        field.setCaretColor(caret);
+        panel.add(label);
+        panel.add(field);
+        return panel;
+    }
+}
 // GameBoard
 public class GameBoard extends JFrame {
     private String[] board = new String[9];
