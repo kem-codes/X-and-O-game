@@ -1,4 +1,4 @@
-package ui;
+(package ui;
 
 import javax.swing.*;
 import java.awt.*;
@@ -70,5 +70,19 @@ public class GlowButton extends JButton {
                 setBorder(BorderFactory.createLineBorder(baseColor, 2));
             }
         });
+    }
+}
+
+public class OverlayPanel extends JPanel {
+    public OverlayPanel() {
+        setOpaque(false);
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.setColor(new Color(0, 0, 0, 150));
+        g.fillRect(0, 0, getWidth(), getHeight());
     }
 }
