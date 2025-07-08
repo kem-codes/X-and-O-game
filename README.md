@@ -12,8 +12,13 @@ A stylish, glowing-effect two-player Tic Tac Toe game built in Java using the Sw
 ✅ Background image transparency for rich visuals  
 ✅ Smooth transitions between game stages  
 ✅ Exit and Return buttons (optional add-ons supported)
+First page
 ![image](https://github.com/user-attachments/assets/a5df91ba-a19d-4392-b845-b5b748cc1069)
+
+Second Page
 ![image](https://github.com/user-attachments/assets/82f6d8d1-f20c-463c-895d-425063062433)
+
+Third page
 ![image](https://github.com/user-attachments/assets/a7d200d4-1d7b-498e-ab15-1d98bea0da96)
 
 
