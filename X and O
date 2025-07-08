@@ -1,0 +1,54 @@
+package ui;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class XandO extends JFrame {
+    public XandO() {
+        setTitle("Welcome to Tic Tac Toe");
+        setSize(600, 600);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        JLabel background = new JLabel(new ImageIcon(getClass().getResource("/image.png")));
+        background.setLayout(new BorderLayout());
+
+        JPanel overlay = new OverlayPanel();
+
+        JLabel title = new JLabel("WELCOME TO TIC TAC TOE");
+        title.setFont(new Font("Arial Black", Font.BOLD, 28));
+        title.setForeground(Color.WHITE);
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel subtitle = new JLabel("First to 3 Rounds Wins!");
+        subtitle.setFont(new Font("Arial", Font.BOLD, 20));
+        subtitle.setForeground(Color.LIGHT_GRAY);
+        subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton startButton = new GlowButton("PLAY", new Color(0, 120, 220));
+        startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        startButton.setPreferredSize(new Dimension(120, 40));
+        startButton.setMaximumSize(new Dimension(120, 40));
+        startButton.setFont(new Font("Arial Black", Font.BOLD, 16));
+        startButton.addActionListener(e -> {
+            new PlayerSetupPage();
+            dispose();
+        });
+
+        overlay.add(Box.createVerticalStrut(100));
+        overlay.add(title);
+        overlay.add(Box.createVerticalStrut(20));
+        overlay.add(subtitle);
+        overlay.add(Box.createVerticalStrut(40));
+        overlay.add(startButton);
+
+        background.add(overlay);
+        setContentPane(background);
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(XandO::new);
+    }
+}
