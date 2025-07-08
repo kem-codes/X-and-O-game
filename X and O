@@ -52,3 +52,23 @@ public class XandO extends JFrame {
         SwingUtilities.invokeLater(XandO::new);
     }
 }
+public class GlowButton extends JButton {
+    public GlowButton(String text, Color baseColor) {
+        super(text);
+        setFont(new Font("Arial Black", Font.BOLD, 16));
+        setForeground(Color.WHITE);
+        setContentAreaFilled(false);
+        setFocusPainted(false);
+        setBorder(BorderFactory.createLineBorder(baseColor, 2));
+        setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
+                setBorder(BorderFactory.createLineBorder(baseColor.brighter(), 3));
+            }
+            public void mouseExited(MouseEvent evt) {
+                setBorder(BorderFactory.createLineBorder(baseColor, 2));
+            }
+        });
+    }
+}
