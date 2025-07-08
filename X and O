@@ -72,21 +72,55 @@ public class GlowButton extends JButton {
         });
     }
 }
+class PlayerSetupPage extends JFrame {
+    public PlayerSetupPage() {
+        setTitle("Player Setup");
+        setSize(600, 600);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
 
-public class OverlayPanel extends JPanel {
-    public OverlayPanel() {
-        setOpaque(false);
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-    }
+        JLabel background = new JLabel(new ImageIcon(getClass().getResource("/image.png")));
+        background.setLayout(new BorderLayout());
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.setColor(new Color(0, 0, 0, 150));
-        g.fillRect(0, 0, getWidth(), getHeight());
+        JPanel overlay = new JPanel() {
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.setColor(new Color(0, 0, 0, 150));
+                g.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        overlay.setOpaque(false);
+        overlay.setLayout(new GridLayout(4, 1));
+
+        JPanel p1 = buildPlayerPanel("Player 1 Name:", Color.CYAN);
+        JPanel p2 = buildPlayerPanel("Player 2 Name:", Color.RED);
+
+        JButton startGame = new GlowButton("START", new Color(0, 180, 120));
+        startGame.setFont(new Font("Arial Black", Font.BOLD, 14));
+        startGame.setPreferredSize(new Dimension(100, 35));
+        startGame.setMaximumSize(new Dimension(100, 35));
+        startGame.setAlignmentX(Component.CENTER_ALIGNMENT);
+        startGame.addActionListener(e -> {
+            String p1name = ((JTextField) ((JPanel) p1).getComponent(1)).getText().trim();
+            String p2name = ((JTextField) ((JPanel) p2).getComponent(1)).getText().trim();
+            if (p1name.isEmpty() || p2name.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "🚫 Please enter both player names.", "Missing Info", JOptionPane.WARNING_MESSAGE);
+            } else {
+                new GameBoard(p1name, p2name, Color.RED, Color.CYAN);
+                dispose();
+            }
+        });
+
+        overlay.add(p1);
+        overlay.add(p2);
+        overlay.add(new JLabel(" "));
+        overlay.add(startGame);
+
+        background.add(overlay);
+        setContentPane(background);
+        setVisible(true);
     }
-}
-//  GameBoard
+/  GameBoard
 public class GameBoard extends JFrame {
     private String[] board = new String[9];
     private int p1Score = 0, p2Score = 0, rounds = 0;
