@@ -1,4 +1,4 @@
-(package ui;
+package ui;
 
 import javax.swing.*;
 import java.awt.*;
@@ -84,5 +84,156 @@ public class OverlayPanel extends JPanel {
         super.paintComponent(g);
         g.setColor(new Color(0, 0, 0, 150));
         g.fillRect(0, 0, getWidth(), getHeight());
+    }
+}
+//  GameBoard
+public class GameBoard extends JFrame {
+    private String[] board = new String[9];
+    private int p1Score = 0, p2Score = 0, rounds = 0;
+    private boolean isXTurn = true;
+    private String p1, p2;
+    private Color xColor, oColor;
+    private JLabel scoreLabel;
+    private List<Integer> winningCombo = new ArrayList<>();
+
+    public GameBoard(String p1, String p2, Color xColor, Color oColor) {
+        this.p1 = p1;
+        this.p2 = p2;
+        this.xColor = xColor;
+        this.oColor = oColor;
+
+        setTitle("Tic Tac Toe");
+        setSize(600, 600);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        scoreLabel = new JLabel(scoreText(), SwingConstants.CENTER);
+        scoreLabel.setFont(new Font("Arial Black", Font.BOLD, 18));
+        scoreLabel.setForeground(Color.WHITE);
+        scoreLabel.setOpaque(true);
+        scoreLabel.setBackground(new Color(0, 0, 0, 180));
+
+        add(scoreLabel, BorderLayout.NORTH);
+        add(new BoardPanel(), BorderLayout.CENTER);
+        getContentPane().setBackground(Color.BLACK);
+        setVisible(true);
+    }
+
+    private class BoardPanel extends JPanel {
+        public BoardPanel() {
+            setBackground(Color.BLACK);
+            addMouseListener(new MouseAdapter() {
+                public void mousePressed(MouseEvent e) {
+                    int cell = getWidth() / 3;
+                    int r = e.getY() / cell, c = e.getX() / cell;
+                    int idx = r * 3 + c;
+                    if (board[idx] == null && winningCombo.isEmpty()) {
+                        board[idx] = isXTurn ? "X" : "O";
+                        if (checkWin()) {
+                            if (isXTurn) p1Score++; else p2Score++;
+                            repaint();
+                            new Timer(800, ev -> {
+                                showMessage((isXTurn ? p1 : p2) + " wins!");
+                                nextRound();
+                            }).start();
+                        } else if (isDraw()) {
+                            showMessage("It's a draw!");
+                            nextRound();
+                        } else {
+                            isXTurn = !isXTurn;
+                        }
+                        scoreLabel.setText(scoreText());
+                        repaint();
+                    }
+                }
+            });
+        }
+
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            int c = getWidth() / 3;
+
+            g2.setColor(Color.CYAN);
+            for (int i = 1; i < 3; i++) {
+                for (int glow = 8; glow > 0; glow -= 2) {
+                    g2.setStroke(new BasicStroke(glow));
+                    g2.drawLine(i * c, 0, i * c, getHeight());
+                    g2.drawLine(0, i * c, getWidth(), i * c);
+                }
+            }
+
+            g2.setFont(new Font("Arial Black", Font.BOLD, c / 2));
+            for (int i = 0; i < 9; i++) {
+                if (board[i] == null) continue;
+                int x = (i % 3) * c;
+                int y = (i / 3) * c;
+
+                Color color = board[i].equals("X") ? xColor : oColor;
+                g2.setColor(winningCombo.contains(i) ? Color.GREEN : color);
+
+                for (int glow = 6; glow > 0; glow -= 2) {
+                    g2.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 50));
+                    g2.drawString(board[i], x + c / 4, y + 3 * c / 4);
+                }
+
+                g2.setColor(winningCombo.contains(i) ? Color.GREEN : color);
+                g2.drawString(board[i], x + c / 4, y + 3 * c / 4);
+            }
+        }
+    }
+
+    private void nextRound() {
+        rounds++;
+        if (rounds >= 3) declareWinner();
+        else {
+            board = new String[9];
+            winningCombo.clear();
+            repaint();
+        }
+    }
+
+    private boolean checkWin() {
+        int[][] combos = {{0,1,2},{3,4,5},{6,7,8},{0,3,6},{1,4,7},{2,5,8},{0,4,8},{2,4,6}};
+        for (int[] c : combos) {
+            if (board[c[0]] != null && board[c[0]].equals(board[c[1]]) && board[c[1]].equals(board[c[2]])) {
+                winningCombo.clear();
+                for (int i : c) winningCombo.add(i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isDraw() {
+        for (String s : board) if (s == null) return false;
+        return true;
+    }
+
+    private void declareWinner() {
+        String msg = p1Score > p2Score ? p1 : p2Score > p1Score ? p2 : "It's a tie!";
+        int opt = JOptionPane.showOptionDialog(this, "🏁 " + msg + " wins!\nPlay again?", "Game Over",
+                JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                null, new String[]{"🔁 Restart", "❌ Exit"}, "🔁 Restart");
+
+        if (opt == JOptionPane.YES_OPTION) {
+            p1Score = p2Score = rounds = 0;
+            board = new String[9];
+            winningCombo.clear();
+            scoreLabel.setText(scoreText());
+            repaint();
+        } else {
+            System.exit(0);
+        }
+    }
+
+    private void showMessage(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Round Over", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private String scoreText() {
+        return p1 + ": " + p1Score + " | " + p2 + ": " + p2Score + " | Round: " + (rounds + 1) + " of 3";
     }
 }
