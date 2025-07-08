@@ -120,7 +120,7 @@ class PlayerSetupPage extends JFrame {
         setContentPane(background);
         setVisible(true);
     }
-/  GameBoard
+// GameBoard
 public class GameBoard extends JFrame {
     private String[] board = new String[9];
     private int p1Score = 0, p2Score = 0, rounds = 0;
